@@ -40,6 +40,7 @@ saveRDS(final_5,file = "conus_rangeland_npp_processed_wy_7km.rds")
 #######masking precip by processed npp#######
 conus_rangeland_npp <- read.csv("/Users/A02296270/Desktop/CONUS_AFRI/CONUS/conus_rangeland_npp_processed_7km_nozerothreshold.csv")
 head(conus_rangeland_npp)
+mean.test<-aggregate(npp~x + y + region,mean,data=conus_rangeland_npp)
 #mean.test<-aggregate(npp~ x+ y + region,mean,data=conus_rangeland_npp) # check for repeats
 summary(conus_rangeland_npp)
 library(tidyr)
@@ -47,17 +48,17 @@ library(dplyr)
 library(raster)
 library(sp)
 library(reshape2)
-final_6<-conus_rangeland_npp[-c(1,6)]
-conus_split<-split(final_6,final_6$year)
-conus_split_2<-lapply(conus_split, function(x) { x["year"] <- NULL; x })
+final_6<-conus_rangeland_npp[-c(1,6)] #remove columns not needed
+conus_split<-split(final_6,final_6$year) #split each year into its own df
+conus_split_2<-lapply(conus_split, function(x) { x["year"] <- NULL; x }) #get rid of year column
 colnames <- c("x","y","z") 
 conus_split_3<-lapply(conus_split_2, setNames, colnames)
-conus_split_4<-lapply(conus_split_3, rasterFromXYZ)
-conus_npp_procossed_stack <-stack(conus_split_4)
-plot(conus_npp_procossed_stack)
+conus_split_4<-lapply(conus_split_3, rasterFromXYZ) #change each year into its own raster
+conus_npp_procossed_stack <-stack(conus_split_4) #stack each raster
+plot(conus_npp_procossed_stack) #check to see that this worked
 
 #processing climate data
-extent_npp_processed<-extent(conus_npp_procossed_stack)
+extent_npp_processed<-extent(conus_npp_procossed_stack) #make a reference for the extent of the processed npp
 
 ####water year precipitation####
 wy_precip_extent_npp_processed<-crop(WatYrprecip_stack_2,extent_npp_processed)
@@ -75,7 +76,6 @@ df_precip_final_allsites_melted_2<-df_precip_final_allsites_melted[-4]
 #merge with npp dataframe
 npp_veg_final<-conus_rangeland_npp[-c(1)]
 npp_precip_all_sites<-merge(df_precip_final_allsites_melted_2,npp_veg_final,by=c("x","y","year"))
-head(npp_precip_all_sites)
 
 ###soil moisture january-march####
 annualSWA_JanMar_extent_npp_processed<-crop(SWA_JanMar_stack,extent_npp_processed)
@@ -94,8 +94,7 @@ df_swc_january_march<-df_annualSWA_JanMar_final_allsites_melted[-4]
 #merge with npp dataframe
 npp_climate_all_sites_2<-merge(npp_precip_all_sites,df_swc_january_march,by=c("x","y","year"))
 head(npp_climate_all_sites_2)
-
-
+test<-aggregate(npp~x+y,mean,data=npp_precip_all_sites_2)
 ###soil moisture April-June####
 annualSWA_AprJun_extent_npp_processed<-crop(SWA_AprJun_stack,extent_npp_processed)
 annualSWA_AprJun_mask_npp_processed<-mask(annualSWA_AprJun_extent_npp_processed,conus_npp_procossed_stack)
@@ -254,5 +253,23 @@ df_hot_dry_october_december<-df_annualBelow3DD_OctDec_final_allsites_melted[-4]
 npp_climate_all_sites_10<-merge(npp_climate_all_sites_9,df_hot_dry_october_december,by=c("x","y","year"))
 head(npp_climate_all_sites_10)
 
-write.csv(npp_climate_all_sites_10,file = 'npp_climate_rangelands.csv')
+#remove duplicates
+npp_climate_all_sites_final<-npp_climate_all_sites_10 %>% distinct(x,y,year,npp,mm, .keep_all = TRUE)
 
+#remove mean npp below 10 for final masking
+rangeland_mean_npp_under10<-aggregate(npp ~ x + y + region,mean,data=npp_climate_all_sites_final)
+npp_climate_all_sites_final_under10<-merge(rangeland_mean_npp_under10,npp_climate_all_sites_final,by=c('x','y','region'))
+npp_climate_all_sites_final_2 <- npp_climate_all_sites_final_under10 %>% filter(npp.x > 10)
+summary(npp_climate_all_sites_final_2 )
+npp_climate_all_sites_final_3 <- npp_climate_all_sites_final_2[-4]
+summary(npp_climate_all_sites_final_3)
+write.csv(npp_climate_all_sites_final_3 ,file = 'npp_climate_rangelands_final.csv')
+
+#much of the desert region filtered out
+raster_look<-rangeland_mean_npp_under10[-3]
+raster_look_2<- raster_look %>% filter(npp > 10)
+raster_look_3<-rasterFromXYZ(raster_look_2)
+plot(raster_look_3)
+
+raster_look_no_cutoff<-rasterFromXYZ(raster_look)
+plot(raster_look_no_cutoff)
