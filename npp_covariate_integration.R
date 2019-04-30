@@ -262,8 +262,11 @@ npp_climate_all_sites_final_under10<-merge(rangeland_mean_npp_under10,npp_climat
 npp_climate_all_sites_final_2 <- npp_climate_all_sites_final_under10 %>% filter(npp.x > 10)
 summary(npp_climate_all_sites_final_2 )
 npp_climate_all_sites_final_3 <- npp_climate_all_sites_final_2[-4]
+names(npp_climate_all_sites_final_3)[6]<-"npp"
+head(npp_climate_all_sites_final_3)
 summary(npp_climate_all_sites_final_3)
-write.csv(npp_climate_all_sites_final_3 ,file = 'npp_climate_rangelands_final.csv')
+
+saveRDS(npp_climate_all_sites_final_3, file = "npp_climate_rangelands_final.rds")
 
 #much of the desert region filtered out
 raster_look<-rangeland_mean_npp_under10[-3]
