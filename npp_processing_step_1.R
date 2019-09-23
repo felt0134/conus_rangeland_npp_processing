@@ -12,7 +12,7 @@ library(reshape2)
 # importing ----------------------------------------------------------------
 
 #uploading the raster count file: how many 30 m pixels used in aggregation
-count<-'/Users/A02296270/Desktop/CONUS_AFRI/Raster_Files/7km_masking_test/landsat-6000-npp-count.tif' #the count rastercount
+count<-'G:/My Drive/range-resilience/Sensitivity/Preliminary_work/Raster_Files/7km_masking_test/landsat-6000-npp-count.tif' #the count rastercount
 raster_test <- raster(count)
 plot(raster_test)
 
@@ -40,7 +40,7 @@ plot(npp_test_raster_50)
 title('50% threshold')
 
 ########### region-identifying rasters  #############
-sites <- "/Users/A02296270/Desktop/CONUS_AFRI/CONUS/RasterbySiteID3.tif" 
+sites <- "G:/My Drive/range-resilience/Sensitivity/CONUS_rangelands_NPP_Sensitivity/climate_data_for_import/RasterbySiteID3.tif" 
 raster_sites<-raster(sites)
 plot(raster_sites)
 
@@ -55,13 +55,13 @@ plot(AFRI_Site_raster)
 ########import NPP Data###########
 #look at whole-map differences in NPP among the different masking schemes
 #initial import of npp data
-conus_npp <- dir('/Users/A02296270/Desktop/CONUS_AFRI/Raster_Files/landsat-6000reduced-npp/', full.names = T)
+conus_npp <- dir('C:/Users/A02296270/Desktop/CONUS_AFRI/Raster_Files/landsat-6000reduced-npp') #have to access from desktop
 npp_stack <-stack(conus_npp) #stack all years of raster data
 #get rid of junk values
 npp_stack[npp_stack>= 65535] <- NA
 plot(npp_stack)
 
-##################whole-continent comparirons############
+##################whole-continent comparisons############
 #summary stats for all data, unmasked
 spatiotemporal_mean_all<-summaryBrick(npp_stack, mean, na.rm=TRUE)
 spatiotemporal_sd_all<-summaryBrick(npp_stack, sd, na.rm=TRUE)

@@ -94,7 +94,7 @@ df_swc_january_march<-df_annualSWA_JanMar_final_allsites_melted[-4]
 #merge with npp dataframe
 npp_climate_all_sites_2<-merge(npp_precip_all_sites,df_swc_january_march,by=c("x","y","year"))
 head(npp_climate_all_sites_2)
-test<-aggregate(npp~x+y,mean,data=npp_precip_all_sites_2)
+
 ###soil moisture April-June####
 annualSWA_AprJun_extent_npp_processed<-crop(SWA_AprJun_stack,extent_npp_processed)
 annualSWA_AprJun_mask_npp_processed<-mask(annualSWA_AprJun_extent_npp_processed,conus_npp_procossed_stack)
@@ -149,7 +149,6 @@ df_swc_october_december<-df_annualSWA_OctDec_final_allsites_melted[-4]
 npp_climate_all_sites_5<-merge(npp_climate_all_sites_4,df_swc_october_december,by=c("x","y","year"))
 head(npp_climate_all_sites_5)
 
-
 #getting mean npp for spatial models
 #spatial model*vegetation
 production_mean<-aggregate(npp ~ x + y + region,mean,data=npp_precip_all_sites)
@@ -158,10 +157,6 @@ head(production_mean)
 mm_mean<-aggregate(mm ~ x + y + region,mean,data=npp_precip_all_sites)
 mm_production_mean<-merge(mm_mean,production_mean,by=c('x','y','region'))
 head(mm_production_mean)
-model<-lm(npp~mm + region + mm:region,data=mm_production_mean)
-summary(model)
-anova(model)
-interact_plot(model, pred = "mm", modx = "region",x.label = 'Mean annual precipitation',y.label = "Mean net primary production")
 
 ###50% transpiration####
 wy_transp_50_extent_npp_processed<-crop(wy_transp_50_stack,extent_npp_processed)
@@ -266,7 +261,11 @@ names(npp_climate_all_sites_final_3)[6]<-"npp"
 head(npp_climate_all_sites_final_3)
 summary(npp_climate_all_sites_final_3)
 
+#with the original SWC data file name, the code has since changed to reflect the updated SWC data
 saveRDS(npp_climate_all_sites_final_3, file = "npp_climate_rangelands_final.rds")
+
+#with updated SWC int he final dataframe, file name
+saveRDS(npp_climate_all_sites_final_3, file = "npp_climate_rangelands_final_updated_SWC.rds")
 
 #much of the desert region filtered out
 raster_look<-rangeland_mean_npp_under10[-3]

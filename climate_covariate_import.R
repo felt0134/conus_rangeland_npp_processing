@@ -2,7 +2,7 @@ library(raster)
 library(plyr)
 library(dplyr)
 
-dir.AFRI_Historical <- "C:/Users/A02296270/Desktop/My Drive/CONUS_rangelands_NPP_Sensitivity/climate_data_for_import/" #set working directory
+dir.AFRI_Historical <- "G:/My Drive/range-resilience/Sensitivity/Preliminary_work/SoilMoisture_Data" #set working directory
 load(file.path(dir.AFRI_Historical, "aggTABLE_allregions.Rdata")) #loads file and name it annualSWA_OctDec I guess
 as.data.frame(WatYrprecip)
 
@@ -10,8 +10,7 @@ as.data.frame(WatYrprecip)
 
 regions <-  c( "CaliforniaAnnual", "ColdDeserts", "HotDeserts", "NorthernMixedSubset", "SGS")
 
-#Specify directory where you have the raster
-sites <- "C:/Users/A02296270/Desktop/My Drive/CONUS_rangelands_NPP_Sensitivity/climate_data_for_import/RasterbySiteID3.tif" 
+#sites raster as made in step 1
 raster_sites<-raster(sites)
 plot(raster_sites)
 
@@ -35,8 +34,7 @@ raster_sites <- raster_sites - raster_sites*1000000
 plot(raster_sites)
 
 
-#######water year total precipitatio########
-dir.AFRI_Historical <- "C:/Users/A02296270/Desktop/My Drive/CONUS_rangelands_NPP_Sensitivity/climate_data_for_import/" #set working directory
+#######water year total precipitation########
 load(file.path(dir.AFRI_Historical, "WatYrprecip19152015.Rdata")) #loads file and name it annualSWA_OctDec I guess
 as.data.frame(WatYrprecip)
 str(WatYrprecip)
@@ -197,7 +195,7 @@ plot(WatYrprecip_stack)
 
 #######soil moisture October-December########
 
-load(file.path(dir.AFRI_Historical, "annualSWA_OctDec19152015.Rdata")) #loads file and name it annualSWA_OctDec I guess
+load(file.path(dir.AFRI_Historical, "annualSWA_OctDec19152015_2.Rdata")) #loads file and name it annualSWA_OctDec I guess
 as.data.frame(annualSWA_OctDec)
 str(annualSWA_OctDec)
 summary(annualSWA_OctDec)
@@ -351,7 +349,7 @@ plot(SWA_OctDec_stack)
 
 ###soil moisture July-September#######
 
-load(file.path(dir.AFRI_Historical, "annualSWA_JulSep19152015.Rdata")) #loads file and name it annualSWA_OctDec I guess
+load(file.path(dir.AFRI_Historical, "annualSWA_JulSep19152015_2.Rdata")) #loads file and name it annualSWA_OctDec I guess
 str(annualSWA_JulSep)
 summary(annualSWA_JulSep)
 rownames(annualSWA_JulSep)
@@ -501,7 +499,7 @@ plot(SWA_JulSep_stack)
 
 ###soil moisture April-June #######
 
-load(file.path(dir.AFRI_Historical, "annualSWA_AprJun19152015.Rdata")) #loads file and name it annualSWA_OctDec I guess
+load(file.path(dir.AFRI_Historical, "annualSWA_AprJun19152015_2.Rdata")) #loads file and name it annualSWA_OctDec I guess
 str(annualSWA_AprJun)
 summary(annualSWA_AprJun)
 rownames(annualSWA_AprJun)

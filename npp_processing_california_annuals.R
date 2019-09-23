@@ -282,22 +282,5 @@ df_npp_ppt_cali_masked_final$pue<-df_npp_ppt_cali_masked_final$npp/df_npp_ppt_ca
 plot(pue~mm,data=df_npp_ppt_cali_masked_final)
 summary(df_npp_ppt_cali_masked_final)
 
-#temperature
-temp_extent_crop_cali<-crop(water_year_temp_allyears_cali,cali_masking)
-plot(temp_extent_crop_cali)
-temp_cali_masked<-mask(temp_extent_crop_cali,cali_masking)
-plot(temp_cali_masked)
-temp_cali_masked_p = rasterToPoints(temp_cali_masked); df_temp_cali_masked = data.frame(temp_cali_masked_p)
-colnames(df_temp_cali_masked)[3:32] <-paste(1986:2015) #rename coluns to years
-df_temp_cali_masked_final <- melt(df_temp_cali_masked, 
-                                  id.vars = c("x", "y"),
-                                  variable.name = "year") #melt to long format
-summary(df_temp_cali_masked_final)
-df_temp_cali_masked_final$temp<-df_temp_cali_masked_final$value
-head(df_temp_cali_masked_final)
-df_temp_cali_masked_final_2<-df_temp_cali_masked_final[-c(4)]
 
-#merge
-df_npp_ppt_temp_cali_masked_final<-merge(df_temp_cali_masked_final_2,df_npp_ppt_cali_masked_final,by=c('x','y','year'))
-head(df_npp_ppt_temp_cali_masked_final)
 #end
